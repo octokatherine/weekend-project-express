@@ -16,17 +16,18 @@
           constructor (){
             super();
             this.state = {
-                data: 0
+                data: []
             }
           }
             componentDidMount(){
                 axios.get('/api/data')
                     .then( response => response.data)
-                    .then ( data => this.setState({data: data.random}))
+                    .then ( data => this.setState({data}))
             }
 
           render(){
               const { data } = this.state;
+              console.log(data)
               return (
                 <HashRouter>
                     <h1>Acme Products</h1>
@@ -36,7 +37,7 @@
                     <Link to='/products/create'>Create A Product</Link>
                     
                     <Route exact path='/' component={Home}/>
-                    <Route exact path='/products' component={Products}/>
+                    <Route exact path='/products' render={()=><Products data={data}/>}/>
                     <Route exact path='/products/create' component={CreateProduct}/>
 
                 </HashRouter>
@@ -50,11 +51,27 @@
            );
       }
 
-      const Products = () => {
-          return ( 
-              <h2>Products</h2>
-           );
+
+      class Products extends React.Component {
+          constructor(props) {
+              super(props);
+              this.state = {  }
+          }
+          render() { 
+              const { data } = this.props
+              return ( 
+                  <div>
+                    <h2>Products</h2>
+                    {
+                        data.map(product => {
+                            return <div key={product.name}>{product.name}</div>
+                        })
+                    }
+                  </div>
+               );
+          }
       }
+       
        
        const CreateProduct = () => {
            return ( 
