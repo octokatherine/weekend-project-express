@@ -11,6 +11,7 @@
   <body>
     <div id='root'></div>
     <script type='text/babel'>
+        const { HashRouter, Link, Route } = ReactRouterDOM;
       class App extends React.Component{
           constructor (){
             super();
@@ -28,16 +29,40 @@
               const { data } = this.state;
               return (
                 <HashRouter>
-                <div>
                     <h1>Acme Products</h1>
-                    <Link to='/'>Home</Link>
-                    <Link to='/products'>Products</Link>
+
+                    <Link to='/' style={{marginRight: '10px'}}>Home</Link>
+                    <Link to='/products' style={{marginRight: '10px'}}>Products</Link>
                     <Link to='/products/create'>Create A Product</Link>
-                </div>
+                    
+                    <Route exact path='/' component={Home}/>
+                    <Route exact path='/products' component={Products}/>
+                    <Route exact path='/products/create' component={CreateProduct}/>
+
                 </HashRouter>
               )
           }
       }
+
+      const Home = () => {
+          return ( 
+              <h2>Home</h2>
+           );
+      }
+
+      const Products = () => {
+          return ( 
+              <h2>Products</h2>
+           );
+      }
+       
+       const CreateProduct = () => {
+           return ( 
+               <h2>Create Product</h2>
+            );
+       }
+      
+
       const root = document.querySelector('#root');
       ReactDOM.render(<App />, root);
     </script>
