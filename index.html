@@ -1,0 +1,45 @@
+<html>
+  <head>
+<style>
+</style>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.js'></script>
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/react-router-dom/5.0.0/react-router-dom.js'></script>
+  </head>
+  <body>
+    <div id='root'></div>
+    <script type='text/babel'>
+      class App extends React.Component{
+          constructor (){
+            super();
+            this.state = {
+                data: 0
+            }
+          }
+            componentDidMount(){
+                axios.get('/api/data')
+                    .then( response => response.data)
+                    .then ( data => this.setState({data: data.random}))
+            }
+
+          render(){
+              const { data } = this.state;
+              return (
+                <HashRouter>
+                <div>
+                    <h1>Acme Products</h1>
+                    <Link to='/'>Home</Link>
+                    <Link to='/products'>Products</Link>
+                    <Link to='/products/create'>Create A Product</Link>
+                </div>
+                </HashRouter>
+              )
+          }
+      }
+      const root = document.querySelector('#root');
+      ReactDOM.render(<App />, root);
+    </script>
+  </body>
+</html>
