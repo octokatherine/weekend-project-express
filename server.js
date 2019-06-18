@@ -6,6 +6,8 @@ const fs = require('fs');
 
 const app = express();
 
+app.use(express.urlencoded({ extended: false }));
+
 const write = (filePath, data) => {
     return new Promise((resolve, reject) => {
         if(!Array.isArray(data)) {
@@ -41,20 +43,36 @@ const read = (filePath) => {
     });
 }
 
-async function getresults() {
-    let results = await read(FILE);
-    console.log('1' + results)
-    return results;
+const deleteItem = (name, data) => {
+    const filtered = data.filter(product => product.name !== name);
+    return filtered;
 }
 
 app.get('/', (req, res, next)=> res.sendFile(path.join(__dirname, 'index.html')));
 
-app.get('/api/data', async (req, res, next)=> {
-    let results = await getresults();
-    console.log('2' + results)
-    res.send(results)
-    }
-    );
+app.get('/api/data', (req, res, next)=> {
+    read(FILE)
+        .then(result => res.send(result))
+    });
 
+
+app.post('/api/products', (req, res, next) => {
+    read(FILE)
+    .then(data => {
+        data.push(req.body);
+        write(FILE, data);
+        })
+    res.redirect('/#/products');
+    })
+
+app.post('/api/products/:name', (req, res, next) => {
+    console.log('delete')
+    read(FILE)
+    .then(data => {
+        data = deleteItem(req.params.name, data)
+        write(FILE, data);
+        })
+    res.redirect('/#/products');
+    })
 
 app.listen(port, ()=> console.log(`listening on port ${port}`));

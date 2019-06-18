@@ -27,7 +27,6 @@
 
           render(){
               const { data } = this.state;
-              console.log(data)
               return (
                 <HashRouter>
                     <h1>Acme Products</h1>
@@ -58,15 +57,21 @@
               this.state = {  }
           }
           render() { 
-              const { data } = this.props
+              const { data } = this.props;
               return ( 
                   <div>
                     <h2>Products</h2>
+                    <div>
                     {
                         data.map(product => {
-                            return <div key={product.name}>{product.name}</div>
+                            if(product !== null) {
+                                return <div key={product.name} style={{marginRight: '20px'}}>{product.name}    <form method='POST' action={`/api/products/${product.name}`}><button type='submit'>Destroy</button></form></div>
+                            } else {
+                                return null;
+                            }
                         })
                     }
+                    </div>
                   </div>
                );
           }
@@ -75,7 +80,14 @@
        
        const CreateProduct = () => {
            return ( 
-               <h2>Create Product</h2>
+                <div>
+                    <h2>Create Product</h2>
+                    <form method='POST' action='/api/products'>
+                        <label htmlFor='name'>Product</label>
+                        <input type='text' name='name'/>
+                        <button type='submit'>Save</button>
+                    </form>
+                </div>
             );
        }
       
