@@ -10,11 +10,11 @@ app.use(express.urlencoded({ extended: false }));
 
 const write = (filePath, data) => {
     return new Promise((resolve, reject) => {
-        if(!Array.isArray(data)) {
+        if (!Array.isArray(data)) {
             return reject('data must be an array');
         }
-        fs.writeFile(filePath, JSON.stringify(data), (err)=> {
-            if(err){
+        fs.writeFile(filePath, JSON.stringify(data), (err) => {
+            if (err) {
                 return reject(err);
             }
             resolve()
@@ -23,19 +23,19 @@ const write = (filePath, data) => {
 }
 
 const read = (filePath) => {
-    return new Promise((resolve, reject)=> {
+    return new Promise((resolve, reject) => {
         fs.readFile(filePath, (err, data) => {
-            if(err) {
+            if (err) {
                 return reject(err);
             }
             let results;
             try {
                 results = JSON.parse(data.toString());
-                if(!Array.isArray(results)){
+                if (!Array.isArray(results)) {
                     return reject('data must be an array');
                 }
             }
-            catch(ex) {
+            catch (ex) {
                 return reject(ex);
             }
             resolve(results);
@@ -48,31 +48,31 @@ const deleteItem = (name, data) => {
     return filtered;
 }
 
-app.get('/', (req, res, next)=> res.sendFile(path.join(__dirname, 'index.html')));
+app.get('/', (req, res, next) => res.sendFile(path.join(__dirname, 'index.html')));
 
-app.get('/api/data', (req, res, next)=> {
+app.get('/api/data', (req, res, next) => {
     read(FILE)
         .then(result => res.send(result))
-    });
+});
 
 
 app.post('/api/products', (req, res, next) => {
     read(FILE)
-    .then(data => {
-        data.push(req.body);
-        write(FILE, data);
+        .then(data => {
+            data.push(req.body);
+            write(FILE, data);
         })
-    res.redirect('/#/products');
-    })
+    res.redirect('/#/products'); // please set status to 201.  Also, res.redirect creates a page refresh, so probably not the best way to do it.
+})
 
 app.post('/api/products/:name', (req, res, next) => {
     console.log('delete')
     read(FILE)
-    .then(data => {
-        data = deleteItem(req.params.name, data)
-        write(FILE, data);
+        .then(data => {
+            data = deleteItem(req.params.name, data)
+            write(FILE, data);
         })
-    res.redirect('/#/products');
-    })
+    res.redirect('/#/products'); // don't forget to set status to 204
+})
 
-app.listen(port, ()=> console.log(`listening on port ${port}`));
+app.listen(port, () => console.log(`listening on port ${port}`));
